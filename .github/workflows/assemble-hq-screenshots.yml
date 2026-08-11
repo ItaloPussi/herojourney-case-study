@@ -3,7 +3,9 @@ name: Assemble HQ screenshots
 on:
   push:
     paths:
-      - 'assets/hq-parts/READY'
+      - 'assets/hq-parts/**'
+      - '.github/workflows/assemble-hq-screenshots.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -16,14 +18,22 @@ jobs:
         with:
           ref: master
 
-      - name: Assemble screenshot assets
+      - name: Assemble binary screenshot assets
         shell: bash
         run: |
           set -euo pipefail
+
           for name in planning dashboard commitments; do
-            cat assets/hq-parts/${name}.*.part > assets/${name}.b64
-            base64 --decode assets/${name}.b64 > /tmp/${name}.webp
-            file /tmp/${name}.webp
+            out="assets/${name}.webp"
+            : > "$out"
+
+            # Each .part file is an independently base64-encoded binary slice.
+            # Decode each slice first, then concatenate the resulting bytes.
+            while IFS= read -r part; do
+              base64 --decode "$part" >> "$out"
+            done < <(find assets/hq-parts -maxdepth 1 -type f -name "${name}.*.part" | sort)
+
+            file "$out"
           done
 
       - name: Verify expected dimensions
@@ -60,18 +70,21 @@ jobs:
               raise ValueError(f'{path}: unsupported WebP')
 
           for name, dims in expected.items():
-              got = webp_size(f'/tmp/{name}.webp')
+              got = webp_size(f'assets/{name}.webp')
               if got != dims:
                   raise SystemExit(f'{name}: expected {dims}, got {got}')
               print(name, got)
           PY
 
-      - name: Remove temporary chunks and commit HQ assets
+      - name: Commit binary assets
         shell: bash
         run: |
+          set -euo pipefail
           rm -rf assets/hq-parts
+          rm -f assets/planning.b64 assets/dashboard.b64 assets/commitments.b64
+
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add assets
-          git commit -m 'assets: upgrade product screenshots to high resolution'
+          git commit -m 'assets: replace encoded screenshots with binary WebP files'
           git push
