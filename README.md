@@ -39,7 +39,7 @@ The portfolio page itself intentionally stays simple:
 - CSS;
 - vanilla JavaScript;
 - inline SVG architecture diagrams;
-- optimized WebP screenshots;
+- direct WebP product screenshots;
 - lightweight EN / PT-BR localization.
 
 No frontend framework or runtime dependency is required to render this repository.
