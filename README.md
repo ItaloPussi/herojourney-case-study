@@ -24,25 +24,22 @@ Herojourney separates **intention, planning, commitment, evidence, outcome and h
 
 The application includes modules for Planning, Daily Commitments, Goals, Review, Habits, Fitness, Nutrition, Weight, Library and Entertainment while keeping domain ownership explicit.
 
+## Public case-study implementation
+
+The portfolio page intentionally stays lightweight:
+
+- semantic HTML;
+- CSS and vanilla JavaScript;
+- three inline SVG diagrams (System, Domain, Delivery);
+- direct high-resolution WebP product screenshots;
+- lightweight EN / PT-BR localization.
+
 ## Stack
 
 **Frontend:** React, Vite, TypeScript, TanStack Query, Recharts, Tailwind  
 **Backend:** Bun, Elysia, Prisma, SQLite, Better Auth  
 **Quality:** Vitest, Biome, architecture checks, ADR lifecycle checks, domain glossary checks, schema-drift verification  
 **Operations:** Docker, GitHub Actions, GHCR, Tailscale, Caddy, VPS
-
-## Public case-study implementation
-
-The portfolio page itself intentionally stays simple:
-
-- semantic HTML;
-- CSS;
-- vanilla JavaScript;
-- inline SVG architecture diagrams;
-- direct WebP product screenshots;
-- lightweight EN / PT-BR localization.
-
-No frontend framework or runtime dependency is required to render this repository.
 
 ## Source availability
 
